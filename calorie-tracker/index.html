@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <title>Calorie Trend</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="app">
+    <!-- Today -->
+    <section id="view-today" class="view">
+      <header class="top"><h1>Today</h1><span id="today-date" class="muted"></span></header>
+      <div class="card ring-card">
+        <svg viewBox="0 0 120 120" class="ring" aria-hidden="true">
+          <circle cx="60" cy="60" r="52" class="ring-bg"/>
+          <circle cx="60" cy="60" r="52" class="ring-fg" id="ring-fg"/>
+        </svg>
+        <div class="ring-label">
+          <div id="remaining" class="big">0</div>
+          <div id="remaining-label" class="muted">kcal left</div>
+        </div>
+      </div>
+      <div class="stats">
+        <div><span id="stat-budget">0</span><small>Budget</small></div>
+        <div><span id="stat-eaten">0</span><small>Eaten</small></div>
+        <div><span id="stat-eta">–</span><small>Target by</small></div>
+      </div>
+      <p id="trend-note" class="card note"></p>
+      <h2>Meals</h2>
+      <ul id="meal-list" class="list"></ul>
+      <p id="no-meals" class="muted center">Nothing logged yet. Tap + to add a meal.</p>
+    </section>
+
+    <!-- Log a meal -->
+    <section id="view-log" class="view" hidden>
+      <header class="top"><h1>Log a meal</h1></header>
+      <div class="card">
+        <label class="photo-drop" id="photo-drop">
+          <input type="file" id="photo-input" accept="image/*" capture="environment" hidden>
+          <img id="photo-preview" alt="" hidden>
+          <span id="photo-hint">📷 Take or choose a photo</span>
+        </label>
+        <div class="row">
+          <textarea id="meal-text" rows="3" placeholder="Or say / type what you had, e.g. “2 eggs, toast and a latte”"></textarea>
+          <button id="mic-btn" class="icon-btn" title="Speak" aria-label="Speak">🎤</button>
+        </div>
+        <button id="analyze-btn" class="primary">Estimate calories</button>
+        <p id="analyze-status" class="muted"></p>
+      </div>
+      <div id="review" class="card" hidden>
+        <input id="meal-title" class="title-input" placeholder="Meal name">
+        <ul id="item-list" class="list items"></ul>
+        <button id="add-item" class="link">+ Add item</button>
+        <p id="meal-notes" class="muted"></p>
+        <div class="total-row"><span>Total</span><strong id="meal-total">0 kcal</strong></div>
+        <p id="meal-impact" class="muted"></p>
+        <button id="save-meal" class="primary">Save meal</button>
+      </div>
+    </section>
+
+    <!-- Trend -->
+    <section id="view-trend" class="view" hidden>
+      <header class="top"><h1>Trend</h1></header>
+      <div class="card">
+        <svg id="chart" viewBox="0 0 340 200" class="chart" role="img" aria-label="Weight trend chart"></svg>
+        <div class="legend"><span class="lg-hist">Estimated</span><span class="lg-dot">Weigh-in</span><span class="lg-proj">Projection</span><span class="lg-goal">Target</span></div>
+      </div>
+      <div class="stats">
+        <div><span id="tr-current">–</span><small>Now (kg)</small></div>
+        <div><span id="tr-balance">–</span><small>Avg kcal/day vs burn</small></div>
+        <div><span id="tr-eta">–</span><small>Target by</small></div>
+      </div>
+      <p id="tr-detail" class="card note"></p>
+      <div class="card">
+        <h2>Log weight</h2>
+        <div class="row">
+          <input id="weight-input" type="number" step="0.1" inputmode="decimal" placeholder="kg">
+          <button id="weight-save" class="primary small">Save</button>
+        </div>
+      </div>
+      <h2>Last 7 days</h2>
+      <ul id="day-list" class="list"></ul>
+    </section>
+
+    <!-- Settings -->
+    <section id="view-settings" class="view" hidden>
+      <header class="top"><h1>Your plan</h1></header>
+      <form id="profile-form" class="card form">
+        <label>Sex <select name="sex"><option value="male">Male</option><option value="female">Female</option></select></label>
+        <label>Age <input name="age" type="number" min="14" max="100" required></label>
+        <label>Height (cm) <input name="heightCm" type="number" min="100" max="250" required></label>
+        <label>Current weight (kg) <input name="weightKg" type="number" step="0.1" required></label>
+        <label>Target weight (kg) <input name="targetKg" type="number" step="0.1" required></label>
+        <label>Activity
+          <select name="activity">
+            <option value="sedentary">Sedentary (desk job)</option>
+            <option value="light">Light (1–3 workouts/wk)</option>
+            <option value="moderate">Moderate (3–5/wk)</option>
+            <option value="active">Active (6–7/wk)</option>
+            <option value="very">Very active</option>
+          </select>
+        </label>
+        <label>Pace
+          <select name="pace">
+            <option value="0.25">Gentle – 0.25 kg/week</option>
+            <option value="0.5" selected>Steady – 0.5 kg/week</option>
+            <option value="0.75">Fast – 0.75 kg/week</option>
+            <option value="1">Aggressive – 1 kg/week</option>
+          </select>
+        </label>
+        <p id="budget-preview" class="muted"></p>
+        <button class="primary">Save plan</button>
+      </form>
+      <div class="card form">
+        <label>Anthropic API key (for photo &amp; smart text recognition)
+          <input id="api-key" type="password" autocomplete="off" placeholder="sk-ant-…">
+        </label>
+        <p class="muted">Stored only on this device. Without a key, typed/spoken meals use a built-in food list and photos need a description.</p>
+        <button id="save-key" class="primary small">Save key</button>
+      </div>
+      <button id="reset" class="link danger">Reset all data</button>
+    </section>
+  </main>
+
+  <nav class="tabs">
+    <button data-view="today" class="active">🏠<span>Today</span></button>
+    <button data-view="log" class="add">＋</button>
+    <button data-view="trend">📈<span>Trend</span></button>
+    <button data-view="settings">⚙️<span>Plan</span></button>
+  </nav>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
