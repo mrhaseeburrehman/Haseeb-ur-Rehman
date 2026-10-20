@@ -30,8 +30,15 @@ npm start        # serves on http://localhost:8080
 npm test         # unit tests for the budget/trend maths and text parser
 ```
 
-To use it on a phone, host the folder on any HTTPS static host (GitHub Pages, Netlify, …),
-open it on the phone and choose **Add to Home Screen**. Camera and microphone access need HTTPS.
+### On your phone
+
+Every push to `main` that touches this folder runs the tests and deploys it to GitHub Pages
+(`.github/workflows/deploy-calorie-tracker.yml`), at
+**https://mrhaseeburrehman.github.io/Haseeb-ur-Rehman/**. One-time setup: in the repository's
+**Settings → Pages**, set **Source** to **GitHub Actions**.
+
+Open the link on your phone and choose **Add to Home Screen** (Safari: Share → Add to Home
+Screen; Chrome: ⋮ → Install app). Camera and microphone access need HTTPS, which Pages provides.
 
 ## Files
 
